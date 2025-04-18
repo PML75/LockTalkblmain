@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import {getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-import{getFirestore, getDoc, doc} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js"
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { getFirestore, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCKwYXg-Au7_vAIZgtXtCfM4smZ04mlHrA",
@@ -10,17 +10,15 @@ const firebaseConfig = {
     messagingSenderId: "633147902051",
     appId: "1:633147902051:web:341fc1e997c69debf19056"
 };
-  
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
-// Add loading animation to the page
+// Function to add a loading overlay on the homepage
 function showLoadingState() {
     const container = document.querySelector('.homepage-container');
-    
-    // Create loading overlay
     const loadingOverlay = document.createElement('div');
     loadingOverlay.id = 'loading-overlay';
     loadingOverlay.style.position = 'absolute';
@@ -36,11 +34,12 @@ function showLoadingState() {
     
     loadingOverlay.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #4361ee;"></i>';
     
-    // Add overlay to container
+    // Ensure the container is positioned relatively so the overlay displays correctly
     container.style.position = 'relative';
     container.appendChild(loadingOverlay);
 }
 
+// Function to remove the loading overlay
 function hideLoadingState() {
     const loadingOverlay = document.getElementById('loading-overlay');
     if (loadingOverlay) {
@@ -51,22 +50,16 @@ function hideLoadingState() {
     }
 }
 
-// Show loading state initially
-document.addEventListener('DOMContentLoaded', () => {
-    showLoadingState();
-});
-
-// Function to animate user data appearance
+// Optional animation for user data appearance
 function animateUserDataAppearance() {
     const detailRows = document.querySelectorAll('.detail-row');
-    
     detailRows.forEach((row, index) => {
         // Set initial state
         row.style.opacity = '0';
         row.style.transform = 'translateY(20px)';
         row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
         
-        // Animate with delay based on index
+        // Animate appearance with delay
         setTimeout(() => {
             row.style.opacity = '1';
             row.style.transform = 'translateY(0)';
@@ -74,90 +67,73 @@ function animateUserDataAppearance() {
     });
 }
 
-// Check for authenticated user and load their data
+// Show loading state as soon as the DOM loads
+document.addEventListener('DOMContentLoaded', () => {
+    showLoadingState();
+});
+
+// Listen for changes in authentication state
 onAuthStateChanged(auth, (user) => {
     const loggedInUserId = localStorage.getItem('loggedInUserId');
     
-    if (loggedInUserId) {
-        console.log("User authenticated:", user?.email);
+    if (user && loggedInUserId) {
+        console.log("User authenticated:", user.email);
         
+        // Fetch user data from Firestore (optional, for additional UI personalization)
         const docRef = doc(db, "users", loggedInUserId);
         getDoc(docRef)
         .then((docSnap) => {
-            // Hide loading state
             hideLoadingState();
             
             if (docSnap.exists()) {
                 const userData = docSnap.data();
                 
-                // Update user info
+                // Update UI with user details if these elements exist in your HTML
                 document.getElementById('loggedUserFName').innerText = userData.firstName || 'N/A';
                 document.getElementById('loggedUserLName').innerText = userData.lastName || 'N/A';
                 document.getElementById('loggedUserEmail').innerText = userData.email || 'N/A';
                 
-                // Animate the appearance of user data
+                // Optionally animate the appearance of user data
                 animateUserDataAppearance();
                 
-                // Update page title with user name
+                // Update page title with user's name
                 document.title = `Lock Talk | ${userData.firstName} ${userData.lastName}`;
             } else {
-                console.log("No document found matching user ID");
-                // Show error message
-                const container = document.querySelector('.homepage-container');
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 2rem;">
-                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem;"></i>
-                        <h2>Account Data Not Found</h2>
-                        <p>We couldn't retrieve your account information.</p>
-                        <button id="logout" class="btn logout-btn" style="margin-top: 1rem;">
-                            <i class="fas fa-sign-out-alt"></i> Return to Login
-                        </button>
-                    </div>
-                `;
-                
-                // Re-attach logout event listener
-                document.getElementById('logout').addEventListener('click', handleLogout);
+                console.log("No document found matching the user ID");
+                // Optionally display an error message here before the user takes any action
+            }
+            
+            // Attach event listener to the start chatting button
+            const startChatButton = document.getElementById('startChat');
+            if (startChatButton) {
+                startChatButton.addEventListener('click', () => {
+                    window.location.href = 'https://main.d3k3llsv0p9ew3.amplifyapp.com/';
+                });
             }
         })
         .catch((error) => {
-            // Hide loading state
             hideLoadingState();
-            
-            console.error("Error getting document:", error);
-            
-            // Show error message
-            const container = document.querySelector('.homepage-container');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 2rem;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #fd7e14; margin-bottom: 1rem;"></i>
-                    <h2>Something Went Wrong</h2>
-                    <p>We couldn't load your account information. Please try again later.</p>
-                    <button id="logout" class="btn logout-btn" style="margin-top: 1rem;">
-                        <i class="fas fa-sign-out-alt"></i> Return to Login
-                    </button>
-                </div>
-            `;
-            
-            // Re-attach logout event listener
-            document.getElementById('logout').addEventListener('click', handleLogout);
-        })
-    }
-    else {
-        console.log("User ID not found in local storage");
-        
-        // Hide loading state
+            console.error("Error fetching user document:", error);
+            // Optionally, you could still enable the start chatting button even if fetching user data fails
+            const startChatButton = document.getElementById('startChat');
+            if (startChatButton) {
+                startChatButton.addEventListener('click', () => {
+                    window.location.href = 'https://main.d1ftsth0bduldt.amplifyapp.com/';
+                });
+            }
+        });
+    } else {
+        console.log("User not authenticated or user ID not found in local storage");
         hideLoadingState();
-        
-        // Redirect to login page
+        // Redirect unauthenticated users back to the login page
         setTimeout(() => {
             window.location.href = 'index.html';
         }, 500);
     }
-})
+});
 
-// Handle logout functionality
+// Logout functionality for users who want to sign out
 function handleLogout() {
-    // Show logging out animation
     const button = document.getElementById('logout');
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
     button.disabled = true;
@@ -165,10 +141,9 @@ function handleLogout() {
     // Remove user ID from local storage
     localStorage.removeItem('loggedInUserId');
     
-    // Sign out from Firebase Auth
+    // Sign out using Firebase Auth
     signOut(auth)
         .then(() => {
-            // Add slight delay for better UX
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 800);
@@ -177,13 +152,11 @@ function handleLogout() {
             console.error('Error signing out:', error);
             button.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
             button.disabled = false;
-            
-            // Show error alert
             alert('Error signing out. Please try again.');
         });
 }
 
-// Add event listener to logout button
+// Attach logout event listener if the logout button exists
 const logoutButton = document.getElementById('logout');
 if (logoutButton) {
     logoutButton.addEventListener('click', handleLogout);
