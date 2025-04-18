@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lock Talk | Dashboard</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="./homepage.js"></script>
+</head>
+<body>
+    <div class="homepage-container">
+        <div class="homepage-header">
+            <h1>Welcome to Lock Talk</h1>
+            <p>Here's your account information</p>
+        </div>
+        
+        <div class="user-details">
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-user"></i> First Name
+                </div>
+                <div class="detail-value" id="loggedUserFName"></div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-user"></i> Last Name
+                </div>
+                <div class="detail-value" id="loggedUserLName"></div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-envelope"></i> Email
+                </div>
+                <div class="detail-value" id="loggedUserEmail"></div>
+            </div>
+        </div>
+        
+        <!-- Chat button -->
+        <div class="button-group">
+            <a href="chat.html" class="btn chat-btn">
+                <i class="fas fa-comments"></i> Start Chatting
+            </a>
+            
+            <button id="logout" class="btn logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+</body>
+</html>
