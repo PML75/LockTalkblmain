@@ -11,6 +11,14 @@ const firebaseConfig = {
     appId: "1:633147902051:web:341fc1e997c69debf19056"
 };
 
+// homepage.js
+fetch('/redirect-config.json')
+  .then(res => res.json())
+  .then(cfg => {
+    window.location.href = cfg.chatUrl;
+  });
+
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
