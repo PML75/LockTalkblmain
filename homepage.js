@@ -107,7 +107,7 @@ onAuthStateChanged(auth, (user) => {
             const startChatButton = document.getElementById('startChat');
             if (startChatButton) {
                 startChatButton.addEventListener('click', () => {
-                    window.location.href = 'https://main.d3k3llsv0p9ew3.amplifyapp.com/';
+                    window.location.href = 'https://main.d7o3j146atvep.amplifyapp.com/';
                 });
             }
         })
@@ -118,7 +118,7 @@ onAuthStateChanged(auth, (user) => {
             const startChatButton = document.getElementById('startChat');
             if (startChatButton) {
                 startChatButton.addEventListener('click', () => {
-                    window.location.href = 'https://main.d3k3llsv0p9ew3.amplifyapp.com/';
+                    window.location.href = 'https://main.d7o3j146atvep.amplifyapp.com/';
                 });
             }
         });
